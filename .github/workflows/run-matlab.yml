@@ -1,3 +1,4 @@
+# Triggered after MATLAB license secret setup
 name: Run MATLAB Simulation
 
 on:
