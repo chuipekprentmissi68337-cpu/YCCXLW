@@ -7,6 +7,9 @@ on:
       - "代码/**"
       - ".github/workflows/run-matlab.yml"
 
+env:
+  MLM_LICENSE_TOKEN: ${{ secrets.MATLAB_LICENSE_TOKEN }}
+
 jobs:
   run-matlab:
     runs-on: ubuntu-latest
@@ -14,10 +17,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v2
+        uses: matlab-actions/setup-matlab@v3
         with:
           release: latest
 
@@ -33,7 +36,7 @@ jobs:
           PY
 
       - name: Run simulation
-        uses: matlab-actions/run-command@v2
+        uses: matlab-actions/run-command@v3
         with:
           command: "cd('代码'); try, main, catch ME, disp(getReport(ME, 'extended', 'hyperlinks', 'off')); exit(1); end"
 
