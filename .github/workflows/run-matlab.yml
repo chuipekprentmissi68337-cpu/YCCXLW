@@ -21,10 +21,21 @@ jobs:
         with:
           release: latest
 
+      - name: Patch MATLAB compatibility
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("代码/main.m")
+          text = p.read_text(encoding="utf-8")
+          text = text.replace("run_closed_loop_case('proposed', fleet, system_k, ev, station)", "run_closed_loop_case(\"proposed\", fleet, system_k, ev, station)")
+          p.write_text(text, encoding="utf-8")
+          PY
+
       - name: Run simulation
         uses: matlab-actions/run-command@v2
         with:
-          command: "cd('代码'); main"
+          command: "cd('代码'); try, main, catch ME, disp(getReport(ME, 'extended', 'hyperlinks', 'off')); exit(1); end"
 
       - name: Upload simulation outputs
         if: always()
