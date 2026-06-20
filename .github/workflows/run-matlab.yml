@@ -1,0 +1,37 @@
+name: Run MATLAB Simulation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "代码/**"
+      - ".github/workflows/run-matlab.yml"
+
+jobs:
+  run-matlab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: latest
+
+      - name: Run simulation
+        uses: matlab-actions/run-command@v2
+        with:
+          command: "cd('代码'); main"
+
+      - name: Upload simulation outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: matlab-simulation-output
+          path: |
+            代码/simulation_results.mat
+            代码/simulation_results.xlsx
+          if-no-files-found: warn
