@@ -1,4 +1,3 @@
-# Triggered after MATLAB license secret setup
 name: Run MATLAB Simulation
 
 on:
@@ -7,9 +6,6 @@ on:
     paths:
       - "代码/**"
       - ".github/workflows/run-matlab.yml"
-
-env:
-  MLM_LICENSE_TOKEN: ${{ secrets.MATLAB_LICENSE_TOKEN }}
 
 jobs:
   run-matlab:
