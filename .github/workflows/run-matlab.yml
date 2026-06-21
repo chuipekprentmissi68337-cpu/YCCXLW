@@ -29,6 +29,21 @@ jobs:
           p = Path("代码/main.m")
           text = p.read_text(encoding="utf-8")
           text = text.replace("run_closed_loop_case('proposed', fleet, system_k, ev, station)", "run_closed_loop_case(\"proposed\", fleet, system_k, ev, station)")
+          old = """function response_prob = estimate_response_prob(num_vehicles, ev)
+          g1 = randg(ev.response_alpha, num_vehicles, 1);
+          g2 = randg(ev.response_beta, num_vehicles, 1);
+          response_prob = g1 ./ max(g1 + g2, 1e-9);
+          response_prob = min(max(response_prob, ev.participation_min), ev.participation_max);
+          end
+          """
+          new = """function response_prob = estimate_response_prob(num_vehicles, ev)
+          response_mean = ev.response_alpha / (ev.response_alpha + ev.response_beta);
+          response_std = sqrt(ev.response_alpha * ev.response_beta / ((ev.response_alpha + ev.response_beta)^2 * (ev.response_alpha + ev.response_beta + 1)));
+          response_prob = response_mean + response_std .* randn(num_vehicles, 1);
+          response_prob = min(max(response_prob, ev.participation_min), ev.participation_max);
+          end
+          """
+          text = text.replace(old, new)
           p.write_text(text, encoding="utf-8")
           PY
 
